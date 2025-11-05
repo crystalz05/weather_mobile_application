@@ -35,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,17 +47,26 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.tyro.weatherapplication.ui.components.AboutCard
 import com.tyro.weatherapplication.ui.components.CustomDropDownMenu
 import com.tyro.weatherapplication.ui.components.FavoriteCards
 import com.tyro.weatherapplication.ui.components.SettingCard
 import com.tyro.weatherapplication.ui.components.ThinCheckbox
 import com.tyro.weatherapplication.ui.components.ThinSwitch
+import com.tyro.weatherapplication.viewModels.ThemeMode
+import com.tyro.weatherapplication.viewModels.ThemeViewModel
 
 @Composable
 fun SettingsScreen(){
 
-    var darkModeOn by remember { mutableStateOf(true) }
+    val themeViewModel: ThemeViewModel = hiltViewModel()
+
+
+    val themeMode by themeViewModel.themeMode.collectAsState()
+
+    val darkModeOn = themeMode == ThemeMode.DARK
+
     var notification by remember { mutableStateOf(true) }
     var dailyForecast by remember { mutableStateOf(true) }
     var weatherAlert by remember { mutableStateOf(true) }
@@ -84,7 +94,12 @@ fun SettingsScreen(){
             )
             Spacer(Modifier.height(12.dp))
             SettingCard(Icons.Outlined.DarkMode, "Dark Mode", "Easy on the eyes"){
-                ThinSwitch(checked = darkModeOn, onCheckedChange = {darkModeOn = it})
+                ThinSwitch(checked = darkModeOn,
+                    onCheckedChange = { isChecked ->
+                        themeViewModel.setThemeMode(
+                            if(isChecked) ThemeMode.DARK else ThemeMode.LIGHT
+                        )
+                })
             }
             Spacer(Modifier.height(24.dp))
             Text("Notifications",

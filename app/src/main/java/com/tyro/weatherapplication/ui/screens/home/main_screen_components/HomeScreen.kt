@@ -49,6 +49,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tyro.weatherapplication.ui.components.LottieAnimation
 import com.tyro.weatherapplication.ui.components.MainCardContentCards
 import com.tyro.weatherapplication.ui.components.WeatherConditionCard
 import com.tyro.weatherapplication.ui.components.WeatherDetailsCard

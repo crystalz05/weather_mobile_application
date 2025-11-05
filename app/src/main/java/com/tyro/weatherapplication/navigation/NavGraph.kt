@@ -21,7 +21,7 @@ import com.tyro.weatherapplication.ui.screens.settings.SettingsScreen
 fun NavGraph(navController: NavHostController, padding: PaddingValues) {
     NavHost(
         navController = navController,
-        startDestination = BottomNavItem.Favorites.route,
+        startDestination = BottomNavItem.Home.route,
         modifier = Modifier.padding(padding),
         enterTransition ={ fadeIn(animationSpec = tween(50)) },
         exitTransition ={ fadeOut(animationSpec = tween(50)) },

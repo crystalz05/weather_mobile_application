@@ -13,9 +13,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.tyro.weatherapplication.navigation.NavGraph
 import com.tyro.weatherapplication.ui.components.BottomBar
+import com.tyro.weatherapplication.viewModels.ThemeViewModel
 
 
 @Composable

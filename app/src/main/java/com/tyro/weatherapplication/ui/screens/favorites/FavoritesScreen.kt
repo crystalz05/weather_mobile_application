@@ -25,12 +25,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.CalendarToday
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -46,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
@@ -56,7 +59,7 @@ import com.tyro.weatherapplication.ui.components.FavoriteCards
 @Composable
 fun FavoritesScreen(){
 
-    var showSheet by remember { mutableStateOf(true) }
+    var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     var location by remember { mutableStateOf("") }
@@ -110,13 +113,20 @@ fun FavoritesScreen(){
                 shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
                 sheetState = sheetState,
                 containerColor = MaterialTheme.colorScheme.surface,
-                dragHandle = { }
+                dragHandle = {
+                }
             ) {
-
                 Column(
                     modifier = Modifier.fillMaxWidth().padding(16.dp)
                 ) {
-                    Text("Add Location", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                    Row(modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Absolute.SpaceBetween) {
+                        Text("Add Location", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                        IconButton(onClick = {showSheet = false}) {
+                            Icon(imageVector = Icons.Outlined.Close, contentDescription = "Close", tint = MaterialTheme.colorScheme.error)
+                        }
+                    }
 
                     Spacer(Modifier.height(24.dp))
                     Text("Location Name")
@@ -125,12 +135,14 @@ fun FavoritesScreen(){
                         modifier = Modifier.fillMaxWidth().height(44.dp)
                             .clip(RoundedCornerShape(100))
                             .background(color = MaterialTheme.colorScheme.surfaceDim.copy(0.8f))
-                            .border(width = 1.dp, color = MaterialTheme.colorScheme.onBackground.copy(0.2f))
+                            .border(width = 1.dp, shape = RoundedCornerShape(100), color = MaterialTheme.colorScheme.onBackground.copy(0.2f))
                         ){
                         BasicTextField(
-                            modifier = Modifier.align(Alignment.Center).fillMaxWidth().padding(horizontal = 16.dp),
+                            modifier = Modifier.align(Alignment.Center).fillMaxWidth()
+                                .padding(horizontal = 16.dp),
                             value = location,
                             keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Sentences),
+                            textStyle = TextStyle.Default.copy(color = MaterialTheme.colorScheme.onSurface),
                             onValueChange = {location = it},
                             singleLine = true,
                         )

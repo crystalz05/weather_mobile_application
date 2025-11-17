@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -23,8 +26,13 @@ import com.tyro.weatherapplication.viewModels.ThemeViewModel
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
+
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         bottomBar = {
             BottomBar(navController = navController)
         },
@@ -43,7 +51,7 @@ fun MainScreen() {
                 )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    NavGraph(navController = navController, padding = innerPadding)
+                    NavGraph(navController = navController, padding = innerPadding, snackbarHostState = snackbarHostState)
                 }
             }
         }

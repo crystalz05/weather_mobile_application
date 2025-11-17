@@ -36,12 +36,16 @@ data class CurrentWeather(
     val windKph: Double,
     @SerializedName("humidity")
     val humidity: Int,
-    @SerializedName("feels_like_c")
+    @SerializedName("feelslike_c")
     val feelsLikeC: Double,
+    @SerializedName("feelslike_f")
+    val feelsLikeF: Double,
     @SerializedName("uv")
     val uv: Double,
-    @SerializedName("vis-km")
-    val visibilityKm: Double
+    @SerializedName("vis_km")
+    val visibilityKm: Double,
+    @SerializedName("pressure_mb")
+    val pressure: Double
 )
 
 data class Condition(
@@ -52,7 +56,6 @@ data class Condition(
     @SerializedName("code")
     val code: Int
 )
-
 
 data class Forecast(
     @SerializedName("forecast_day")

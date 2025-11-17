@@ -12,6 +12,7 @@ import androidx.compose.material.icons.outlined.WbCloudy
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,7 +23,9 @@ import androidx.compose.ui.unit.dp
 import com.tyro.weatherapplication.ui.components.DaysForecast
 
 @Composable
-fun ForecastScreen(){
+fun ForecastScreen(
+    snackbarHostState: SnackbarHostState
+){
 
     data class ForecastData(
         val icon: ImageVector,

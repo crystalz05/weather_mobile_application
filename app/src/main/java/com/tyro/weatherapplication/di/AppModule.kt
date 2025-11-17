@@ -1,6 +1,7 @@
 package com.tyro.weatherapplication.di
 
 import com.tyro.weatherapplication.data.WeatherResponse
+import com.tyro.weatherapplication.data.remote.WeatherApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,7 +10,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -27,7 +27,6 @@ object AppModule {
             level = HttpLoggingInterceptor.Level.BODY
         }
     }
-
     @Provides
     @Singleton
     fun provideOkHttpClient(
@@ -51,6 +50,10 @@ object AppModule {
             .build()
     }
 
-//    fun provideWeatherApiService(retrofit: Retrofit)
+    @Provides
+    @Singleton
+    fun provideWeatherApiService(retrofit: Retrofit): WeatherApiService{
+        return retrofit.create(WeatherApiService::class.java)
+    }
 
 }

@@ -49,13 +49,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tyro.weatherapplication.data.ThemeMode
 import com.tyro.weatherapplication.ui.components.AboutCard
 import com.tyro.weatherapplication.ui.components.CustomDropDownMenu
 import com.tyro.weatherapplication.ui.components.FavoriteCards
 import com.tyro.weatherapplication.ui.components.SettingCard
 import com.tyro.weatherapplication.ui.components.ThinCheckbox
 import com.tyro.weatherapplication.ui.components.ThinSwitch
-import com.tyro.weatherapplication.viewModels.ThemeMode
 import com.tyro.weatherapplication.viewModels.ThemeViewModel
 
 @Composable
@@ -98,10 +98,11 @@ fun SettingsScreen(
             Spacer(Modifier.height(12.dp))
             SettingCard(Icons.Outlined.DarkMode, "Dark Mode", "Easy on the eyes"){
                 ThinSwitch(checked = darkModeOn,
-                    onCheckedChange = { isChecked ->
-                        themeViewModel.setThemeMode(
-                            if(isChecked) ThemeMode.DARK else ThemeMode.LIGHT
-                        )
+                    onCheckedChange = {
+//                        isChecked ->
+//                        themeViewModel.setThemeMode(
+//                            if(isChecked) ThemeMode.DARK else ThemeMode.LIGHT)
+                        themeViewModel.toggleDarkMode()
                 })
             }
             Spacer(Modifier.height(24.dp))

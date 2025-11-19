@@ -10,10 +10,10 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tyro.weatherapplication.data.ThemeMode
 import com.tyro.weatherapplication.helper_classes.setStatusBarIconColor
 import com.tyro.weatherapplication.ui.screens.MainScreen
 import com.tyro.weatherapplication.ui.theme.WeatherApplicationTheme
-import com.tyro.weatherapplication.viewModels.ThemeMode
 import com.tyro.weatherapplication.viewModels.ThemeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 

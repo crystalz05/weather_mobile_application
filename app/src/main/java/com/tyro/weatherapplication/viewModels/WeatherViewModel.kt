@@ -21,20 +21,29 @@ class WeatherViewModel @Inject constructor(
     private val _weatherState = MutableStateFlow<Resource<WeatherResponse>>(Resource.Loading())
     val weatherState: StateFlow<Resource<WeatherResponse>> = _weatherState
 
+    private val _currentLocation = MutableStateFlow<String?>(null)
+
     //fetches weather data by taking the location in words or coordinates
-    fun fetchWeather(location: String){
+    fun fetchWeather(location: String, forceRefresh: Boolean = false){
+        _currentLocation.value = location
         viewModelScope.launch {
-            weatherRepository.getCurrentWeather(location).collect{resource ->
+            weatherRepository.getCurrentWeather(location, forceRefresh).collect{resource ->
                 _weatherState.update { resource }
-                Log.d("Weather ViewModel", _weatherState.value.data.toString())
+                Log.d("WeatherViewModel", "Weather State: ${resource.data}")
             }
         }
     }
 
     //fetch weather by passing in the latitude and longitude
-    fun fetchWeatherLatLon(latitude: Double, longitude: Double){
+    fun fetchWeatherLatLon(latitude: Double, longitude: Double, forceRefresh: Boolean = false){
         val location = "${latitude},${longitude}"
-        fetchWeather(location)
+        fetchWeather(location, forceRefresh)
+    }
+
+    fun refresh(){
+        _currentLocation.value?.let { location ->
+            fetchWeather(location, forceRefresh = true)
+        }
     }
 
 }

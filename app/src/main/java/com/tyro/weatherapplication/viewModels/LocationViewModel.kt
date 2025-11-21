@@ -27,8 +27,4 @@ class LocationViewModel @Inject constructor(
             _locationState.value = result
         }
     }
-
-    fun hasLocationPermission(): Boolean {
-        return locationManager.hasLocationPermission()
-    }
 }

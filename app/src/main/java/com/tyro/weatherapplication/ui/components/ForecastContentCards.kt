@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DaysForecast(icon: ImageVector, day: String, condition: String, topTemp: String, lowTemp:String){
+fun DaysForecast(animation: WeatherAnimation, day: String, condition: String, topTemp: String, lowTemp:String){
     Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background.copy(0.2f)),
         border = BorderStroke(width = 0.4.dp, color = MaterialTheme.colorScheme.onBackground.copy(0.2f)),
         modifier = Modifier.wrapContentHeight()
@@ -35,7 +35,9 @@ fun DaysForecast(icon: ImageVector, day: String, condition: String, topTemp: Str
             .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(imageVector = icon, contentDescription = null, Modifier.size(30.dp), tint = MaterialTheme.colorScheme.primary)
+
+                LottieAnimation(animation.lottie, 50.dp)
+//                Icon(imageVector = icon, contentDescription = null, Modifier.size(30.dp), tint = MaterialTheme.colorScheme.primary)
                 Spacer(Modifier.width(16.dp))
                 Column {
                     Text(day, color = MaterialTheme.colorScheme.onBackground, style = MaterialTheme.typography.titleMedium)

@@ -14,7 +14,9 @@ import com.tyro.weatherapplication.data.ThemeMode
 import com.tyro.weatherapplication.helper_classes.setStatusBarIconColor
 import com.tyro.weatherapplication.ui.screens.MainScreen
 import com.tyro.weatherapplication.ui.theme.WeatherApplicationTheme
+import com.tyro.weatherapplication.viewModels.FavoriteViewModel
 import com.tyro.weatherapplication.viewModels.ThemeViewModel
+import com.tyro.weatherapplication.viewModels.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,7 +27,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
 
+            val weatherViewModel: WeatherViewModel = hiltViewModel()
             val themeViewModel: ThemeViewModel = hiltViewModel()
+            val favoriteViewModel: FavoriteViewModel = hiltViewModel()
 
             val themeMode by themeViewModel.themeMode.collectAsState()
             val isSystemDark = isSystemInDarkTheme()
@@ -41,7 +45,7 @@ class MainActivity : ComponentActivity() {
             }
 
             WeatherApplicationTheme(darkTheme = isDark) {
-                MainScreen()
+                MainScreen(weatherViewModel, favoriteViewModel)
             }
         }
     }

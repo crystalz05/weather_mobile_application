@@ -41,7 +41,7 @@ fun MainCardContentCards(icon: ImageVector, title: String, value: String) {
 }
 
 @Composable
-fun WeatherConditionCard(icon: ImageVector, time: String, temperature: String) {
+fun WeatherConditionCard(animation: WeatherAnimation, time: String, temperature: String) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background.copy(0.2f)),
         modifier = Modifier.width(90.dp).wrapContentHeight(),
@@ -54,7 +54,8 @@ fun WeatherConditionCard(icon: ImageVector, time: String, temperature: String) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
             Text(time, color = MaterialTheme.colorScheme.onBackground.copy(0.5f), style = MaterialTheme.typography.titleSmall)
-            Icon(imageVector = icon, contentDescription = null, Modifier.size(30.dp), tint = MaterialTheme.colorScheme.primary)
+            LottieAnimation(animation.lottie, 50.dp)
+//            Icon(imageVector = icon, contentDescription = null, Modifier.size(30.dp), tint = MaterialTheme.colorScheme.primary)
             Text(temperature, color = MaterialTheme.colorScheme.onBackground, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
         }
     }

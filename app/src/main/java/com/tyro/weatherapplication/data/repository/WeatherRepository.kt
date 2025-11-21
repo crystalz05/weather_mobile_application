@@ -1,5 +1,6 @@
 package com.tyro.weatherapplication.data.repository
 
+import android.util.Log
 import com.tyro.weatherapplication.BuildConfig
 import com.tyro.weatherapplication.data.CurrentWeather
 import com.tyro.weatherapplication.data.Forecast
@@ -37,7 +38,7 @@ class WeatherRepository @Inject constructor(
                 }
             }
 
-            val response = api.getCurrentWeather(apiKey, location)
+            val response = api.getForecast(apiKey, location)
 
             if(response.isSuccessful && response.body() != null){
                 val weatherData = response.body()!!

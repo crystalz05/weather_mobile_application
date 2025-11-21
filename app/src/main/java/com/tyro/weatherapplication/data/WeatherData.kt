@@ -58,7 +58,7 @@ data class Condition(
 )
 
 data class Forecast(
-    @SerializedName("forecast_day")
+    @SerializedName("forecastday")
     val forecastDays: List<ForecastDay>
 )
 
@@ -72,10 +72,18 @@ data class ForecastDay(
 )
 
 data class Day(
-    @SerializedName("max_temp_c")
+    @SerializedName("maxtemp_c")
     val maxTempC: Double,
-    @SerializedName("max_temp_f")
+    @SerializedName("maxtemp_f")
     val maxTempf: Double,
+    @SerializedName("mintemp_c")
+    val minTempC: Double,
+    @SerializedName("mintemp_f")
+    val minTempf: Double,
+    @SerializedName("avgtemp_c")
+    val avgTempC: Double,
+    @SerializedName("avgtemp_f")
+    val avgTempf: Double,
     @SerializedName("condition")
     val condition: Condition
 )

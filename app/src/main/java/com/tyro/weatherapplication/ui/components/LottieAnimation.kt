@@ -5,6 +5,7 @@ import com.tyro.weatherapplication.R
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -46,7 +47,7 @@ sealed class WeatherAnimation(val lottie: Int){
 }
 
 @Composable
-fun LottieAnimation(animation: Int) {
+fun LottieAnimation(animation: Int, size: Dp) {
 
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(animation))
     val progress by animateLottieCompositionAsState(
@@ -57,7 +58,7 @@ fun LottieAnimation(animation: Int) {
     LottieAnimation(
         composition = composition,
         progress = { progress },
-        modifier = Modifier.size(100.dp)
+        modifier = Modifier.size(size)
     )
 }
 

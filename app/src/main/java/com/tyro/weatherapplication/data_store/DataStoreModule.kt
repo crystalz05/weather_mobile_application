@@ -3,9 +3,12 @@ package com.tyro.weatherapplication.data_store
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.room.Room
 import com.google.gson.Gson
 import com.tyro.weatherapplication.data.Forecast
 import com.tyro.weatherapplication.data.WeatherResponse
+import com.tyro.weatherapplication.data.room.FavoriteLocationDataBase
+import com.tyro.weatherapplication.data.room.FavouriteLocationDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -65,6 +68,22 @@ object DataStoreModule {
             deserializer = { json -> Gson().fromJson(json, Forecast::class.java) },
             cacheValidityMinutes = 60  // Cache forecast for 1 hour
         )
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideDataBase(@ApplicationContext context: Context): FavoriteLocationDataBase{
+        return Room.databaseBuilder(
+            context,
+            FavoriteLocationDataBase::class.java,
+            "weather_db")
+            .build()
+    }
+
+    @Provides
+    fun providesFavoriteDao(db: FavoriteLocationDataBase): FavouriteLocationDao{
+        return db.favoriteLocationDao()
     }
 
 //

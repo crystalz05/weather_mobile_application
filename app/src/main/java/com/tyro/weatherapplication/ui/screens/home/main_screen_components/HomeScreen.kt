@@ -1,6 +1,9 @@
 package com.tyro.weatherapplication.ui.screens.home.main_screen_components
 
 import android.Manifest
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +25,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.input.TextFieldLineLimits
@@ -68,6 +72,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.substring
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,20 +85,33 @@ import com.tyro.weatherapplication.ui.components.WeatherAnimation
 import com.tyro.weatherapplication.ui.components.WeatherConditionCard
 import com.tyro.weatherapplication.ui.components.WeatherDetailsCard
 import com.tyro.weatherapplication.utils.Resource
+import com.tyro.weatherapplication.viewModels.FavoriteViewModel
 import com.tyro.weatherapplication.viewModels.LocationViewModel
 import com.tyro.weatherapplication.viewModels.WeatherViewModel
+import kotlinx.coroutines.delay
+import java.time.LocalDate
+import java.time.LocalDateTime
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
+    weatherViewModel: WeatherViewModel,
+    favoriteViewModel: FavoriteViewModel,
     snackbarHostState: SnackbarHostState
-    ) {
+) {
 
-    val weatherViewModel: WeatherViewModel = hiltViewModel()
     val locationViewModel: LocationViewModel = hiltViewModel()
 
     val weatherState by weatherViewModel.weatherState.collectAsState()
     val locationState by locationViewModel.locationState.collectAsState()
+
+
+    val currentDayDate = LocalDate.now()
+
+    val todayWeather = weatherState.data?.forecast?.forecastDays?.firstOrNull{ it.date == currentDayDate.toString() }
+    val hourlyData = todayWeather?.hours ?: emptyList()
+
 
     // Location permissions
     val locationPermissions = rememberMultiplePermissionsState(
@@ -121,7 +139,6 @@ fun HomeScreen(
                 }
             }
             is Resource.Error -> {
-                // Show error in snackbar
                 snackbarHostState.showSnackbar(
                     message = state.message ?: "Location error",
                     duration = SnackbarDuration.Short
@@ -130,7 +147,6 @@ fun HomeScreen(
             else -> { /* Loading - do nothing */ }
         }
     }
-
 
     // Handle permission denial
     LaunchedEffect(locationPermissions.allPermissionsGranted) {
@@ -145,17 +161,6 @@ fun HomeScreen(
             }
         }
     }
-
-//    LaunchedEffect(locationState) {
-//        if(locationState is Resource.Success){
-//            val location = (locationState as Resource.Success).data
-//            location?.let {
-//                val query = it.city ?: "${it.latitude}, ${it.longitude}"
-//                weatherViewModel.fetchWeather(query)
-//            }
-//        }
-//    }
-
 
     var searchLocation = remember { TextFieldState() }
     var showSearch by remember { mutableStateOf(false) }
@@ -180,6 +185,23 @@ fun HomeScreen(
     val conditionCode = weatherState.data?.current?.condition?.code
     val animation = conditionCode?.let { WeatherAnimation.fromCode(it) }
 
+
+    //lazy list state to automatically scroll to the current hour so it appears centered.
+    val hourlyListState = rememberLazyListState()
+    val currentTime = LocalDateTime.now().hour
+    val currentHourIndex = hourlyData.indexOfFirst { hour ->
+        hour.time.split(" ")[1].substring(0,2).toInt() == currentTime
+    }
+
+    LaunchedEffect(hourlyData) {
+        if(currentHourIndex != -1){
+            delay(200)
+            hourlyListState.animateScrollToItem(
+                index = currentHourIndex,
+                scrollOffset = -150
+            )
+        }
+    }
 
     when(weatherState){
         is Resource.Loading ->{
@@ -221,7 +243,7 @@ fun HomeScreen(
                         .fillMaxSize()
                         .pointerInput(showSearch) {
                             if (showSearch) {
-                                detectTapGestures(onTap = {showSearch = false })
+                                detectTapGestures(onTap = { showSearch = false })
                             }
                         }
                 ){
@@ -255,6 +277,7 @@ fun HomeScreen(
                                 IconButton(onClick = {
                                     if (locationPermissions.allPermissionsGranted) {
                                         locationViewModel.getCurrentLocation()
+                                        locationState.data?.let { weatherViewModel.fetchWeatherLatLon(it.latitude, it.longitude, forceRefresh = true) }
                                     } else {
                                         locationPermissions.launchMultiplePermissionRequest()
                                     }
@@ -281,70 +304,14 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.height(24.dp))
                         LazyColumn(modifier = Modifier.weight(1f)) {
                             item {
-                                Card(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 8.dp),
-                                    shape = RoundedCornerShape(16.dp)
-                                ) {
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .background(
-                                                brush = Brush.linearGradient(
-                                                    colors = listOf(
-                                                        MaterialTheme.colorScheme.primary,
-                                                        MaterialTheme.colorScheme.onPrimaryContainer
-                                                    ),
-                                                    start = Offset(0f, 0f),
-                                                    end = Offset(1000f, 1000f)
-                                                )
-                                            )
-                                            .padding(24.dp)
-                                    ) {
-                                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                            Column {
-                                                Text("Right Now", color = MaterialTheme.colorScheme.background, style = MaterialTheme.typography.titleMedium)
-                                                Text("${data.current.tempC.toInt()}°", color = MaterialTheme.colorScheme.background, style = MaterialTheme.typography.displayLarge, fontWeight = FontWeight.ExtraBold)
-                                            }
-//                                            Icon(imageVector = Icons.Outlined.WbCloudy, contentDescription = null,
-//                                                tint = MaterialTheme.colorScheme.background.copy(0.8f), modifier = Modifier.size(70.dp))
-                                            if (animation != null) {
-                                                LottieAnimation(animation.lottie)
-                                            }
-                                        }
-                                        Text(data.current.condition.text, color = MaterialTheme.colorScheme.background, style = MaterialTheme.typography.titleMedium)
-                                        Spacer(Modifier.height(24.dp))
-                                        Row(modifier = Modifier.fillMaxWidth()) {
-                                            Column(modifier = Modifier.weight(1f)) {
-                                                MainCardContentCards(Icons.Outlined.Visibility, "Visibility", "${data.current.visibilityKm}")
-                                            }
-                                            Spacer(Modifier.width(16.dp))
-                                            Column(modifier = Modifier.weight(1f)) {
-                                                MainCardContentCards(Icons.Outlined.Air, "Wind", "${data.current.windKph}")
-                                            }
-                                        }
-                                        Spacer(Modifier.height(18.dp))
-                                        Row(modifier = Modifier.fillMaxWidth()) {
-                                            Column(modifier = Modifier.weight(1f)) {
-                                                MainCardContentCards(Icons.Outlined.Opacity, "Humidity", "${data.current.humidity}")
-                                            }
-                                            Spacer(Modifier.width(16.dp))
-                                            Column(modifier = Modifier.weight(1f)) {
-                                                MainCardContentCards(Icons.Outlined.Thermostat, "Feels Like", "${data.current.feelsLikeC}")
-                                            }
-                                        }
-                                    }
+                                //The home screen main card
+                                if(animation != null){
+                                    MainCard(data, favoriteViewModel, animation)
                                 }
-
                                 Spacer(Modifier.height(16.dp))
                                 Text("Today", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)
                                 Spacer(Modifier.height(16.dp))
-                                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    items(6) { _ ->
-                                        WeatherConditionCard(Icons.Outlined.WbCloudy, "1 PM", "73°")
-                                    }
-                                }
+                                CurrentDayData(hourlyListState, hourlyData)
                                 Spacer(Modifier.height(16.dp))
                                 Text("Details", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)
                                 Spacer(Modifier.height(16.dp))
@@ -361,6 +328,8 @@ fun HomeScreen(
                             }
                         }
                     }
+
+                    //the search box
                     if(showSearch){
                         Box(modifier = Modifier
                             .background(
@@ -370,6 +339,7 @@ fun HomeScreen(
                             .height(50.dp)
                             .fillMaxWidth()
                             .padding(start = 18.dp, end = 8.dp)){
+
                             BasicTextField(state = searchLocation,
                                 textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground),
                                 lineLimits = TextFieldLineLimits.SingleLine,
@@ -377,7 +347,7 @@ fun HomeScreen(
                                     .fillMaxWidth()
                                     .align(Alignment.Center))
                             TextButton(onClick = {
-                                weatherViewModel.fetchWeather("${searchLocation.text}")
+                                weatherViewModel.fetchWeather("${searchLocation.text}", forceRefresh = true)
                                 showSearch = false
                             }, modifier = Modifier.align(Alignment.CenterEnd)) {
                                 Text("Search", color = MaterialTheme.colorScheme.primary)

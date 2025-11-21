@@ -1,5 +1,7 @@
 package com.tyro.weatherapplication.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -16,11 +18,16 @@ import com.tyro.weatherapplication.ui.screens.favorites.FavoritesScreen
 import com.tyro.weatherapplication.ui.screens.forcast.ForecastScreen
 import com.tyro.weatherapplication.ui.screens.home.main_screen_components.HomeScreen
 import com.tyro.weatherapplication.ui.screens.settings.SettingsScreen
+import com.tyro.weatherapplication.viewModels.FavoriteViewModel
+import com.tyro.weatherapplication.viewModels.WeatherViewModel
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraph(
     navController: NavHostController,
+    weatherViewModel: WeatherViewModel,
+    favoriteViewModel: FavoriteViewModel,
     padding: PaddingValues,
     snackbarHostState: SnackbarHostState
     ) {
@@ -31,10 +38,10 @@ fun NavGraph(
         enterTransition ={ fadeIn(animationSpec = tween(50)) },
         exitTransition ={ fadeOut(animationSpec = tween(50)) },
     ) {
-        composable(Screen.Home.route) { HomeScreen(snackbarHostState = snackbarHostState) }
-        composable(Screen.Forecast.route) { ForecastScreen(snackbarHostState = snackbarHostState) }
-        composable(Screen.Favorites.route) { FavoritesScreen(snackbarHostState = snackbarHostState) }
-        composable(Screen.Settings.route) { SettingsScreen(snackbarHostState = snackbarHostState) }
+        composable(Screen.Home.route) { HomeScreen(weatherViewModel, favoriteViewModel, snackbarHostState = snackbarHostState) }
+        composable(Screen.Forecast.route) { ForecastScreen(weatherViewModel) }
+        composable(Screen.Favorites.route) { FavoritesScreen(weatherViewModel, favoriteViewModel, navController) }
+        composable(Screen.Settings.route) { SettingsScreen() }
     }
 }
 

@@ -18,12 +18,15 @@ A weather mobile application that provides real-time weather updates, forecasts,
 - **UI:** Jetpack Compose  
 - **Architecture:** MVVM  
 - **API:** weatherapi
-- **Dependency Injection:** Hilt (optional)
+- **Dependency Injection:** Hilt
 
 ---
 
 ## Screenshots
-*(Coming soon)*
+![Description of image](images/home_screen.png)
+![Description of image](images/forecast_screen.png)
+![Description of image](images/favorites_screen.png)
+![Description of image](images/settings_screen.png)
 
 ---
 

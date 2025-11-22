@@ -48,10 +48,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.tyro.weatherapplication.data.room.FavoriteLocation
 import com.tyro.weatherapplication.ui.components.CustomTextField
 import com.tyro.weatherapplication.viewModels.FavoriteViewModel
+import com.tyro.weatherapplication.viewModels.MainViewModel
 import com.tyro.weatherapplication.viewModels.WeatherViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,16 +64,27 @@ fun FavoritesScreen(
     navController: NavHostController
 ){
 
+    val viewModel : MainViewModel = hiltViewModel()
+
     val favorites by favoriteViewModel.favorites.collectAsState()
 
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    var location by remember { mutableStateOf("") }
-    var latitude by remember { mutableStateOf("") }
-    var longitude by remember { mutableStateOf("") }
+    val location = viewModel.locationName
+    var latitude = viewModel.locationLat
+    var longitude = viewModel.locationLon
+
+    var latHolder by remember { mutableStateOf("") }
+    var lonHolder by remember { mutableStateOf("") }
 
     var addCoordinates by remember { mutableStateOf(false) }
+
+    if(!showSheet){
+        viewModel.updateLocationName("")
+        viewModel.updateLocationLat("")
+        viewModel.updateLocationLon("")
+    }
 
 
 
@@ -112,7 +125,11 @@ fun FavoritesScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(imageVector = Icons.Outlined.Close, contentDescription = "close",
-                        tint = Color.Red, modifier = Modifier.clickable(onClick = {addCoordinates = false}).align(
+                        tint = Color.Red, modifier = Modifier.clickable(onClick = {
+                            latHolder = ""
+                            lonHolder = ""
+                            addCoordinates = false
+                        }).align(
                         Alignment.TopEnd).padding(20.dp))
                     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
@@ -120,20 +137,26 @@ fun FavoritesScreen(
                             color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                         Spacer(Modifier.height(18.dp))
                         //Text Field for latitude
-                        CustomTextField(location = latitude.toString(),
-                            onValueChange = {newValue -> latitude = newValue.filter { it.isDigit() || it == '.' }.take(12)},
+                        CustomTextField(location = latHolder,
+                            onValueChange = {newValue -> latHolder = newValue.filter { it.isDigit() || it == '.' }},
                             keyboard = KeyboardOptions(keyboardType = KeyboardType.Number),
                             placeholder = "Latitude"
                         )
                         Spacer(Modifier.height(18.dp))
                         //Text Field for latitude
-                        CustomTextField(location = longitude.toString(),
-                            onValueChange = {newValue -> longitude = newValue.filter { it.isDigit() || it == '.' }},
+                        CustomTextField(location = lonHolder,
+                            onValueChange = {newValue -> lonHolder = newValue.filter { it.isDigit() || it == '.' }},
                             keyboard = KeyboardOptions(keyboardType = KeyboardType.Number),
                             placeholder = "Longitude"
                         )
                         Spacer(Modifier.height(18.dp))
-                        Button(onClick = {addCoordinates = false}, modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp), shape = RoundedCornerShape(30)) {
+                        Button(onClick = {
+                            viewModel.updateLocationLat(latHolder)
+                            viewModel.updateLocationLon(lonHolder)
+                            addCoordinates = false
+                            latHolder = ""
+                            lonHolder = ""
+                                         }, modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp), shape = RoundedCornerShape(30)) {
                             Text("Add Coordinates")
                         }
                     }
@@ -178,7 +201,7 @@ fun FavoritesScreen(
                             value = location,
                             keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Sentences),
                             textStyle = TextStyle.Default.copy(color = MaterialTheme.colorScheme.onSurface),
-                            onValueChange = {location = it},
+                            onValueChange = {viewModel.updateLocationName(it)},
                             singleLine = true,
                         )
                         //adding coordinates

@@ -14,6 +14,7 @@ import com.tyro.weatherapplication.data.ThemeMode
 import com.tyro.weatherapplication.helper_classes.setStatusBarIconColor
 import com.tyro.weatherapplication.ui.screens.MainScreen
 import com.tyro.weatherapplication.ui.theme.WeatherApplicationTheme
+import com.tyro.weatherapplication.viewModels.ConnectivityViewModel
 import com.tyro.weatherapplication.viewModels.FavoriteViewModel
 import com.tyro.weatherapplication.viewModels.ThemeViewModel
 import com.tyro.weatherapplication.viewModels.WeatherViewModel
@@ -30,6 +31,7 @@ class MainActivity : ComponentActivity() {
             val weatherViewModel: WeatherViewModel = hiltViewModel()
             val themeViewModel: ThemeViewModel = hiltViewModel()
             val favoriteViewModel: FavoriteViewModel = hiltViewModel()
+            val connectivityViewModel: ConnectivityViewModel = hiltViewModel()
 
             val themeMode by themeViewModel.themeMode.collectAsState()
             val isSystemDark = isSystemInDarkTheme()
@@ -45,7 +47,7 @@ class MainActivity : ComponentActivity() {
             }
 
             WeatherApplicationTheme(darkTheme = isDark) {
-                MainScreen(weatherViewModel, favoriteViewModel)
+                MainScreen(weatherViewModel, connectivityViewModel, favoriteViewModel)
             }
         }
     }

@@ -1,10 +1,14 @@
 package com.tyro.weatherapplication.di
 
+import android.content.Context
 import com.tyro.weatherapplication.data.WeatherResponse
+import com.tyro.weatherapplication.data.remote.ConnectivityObserver
+import com.tyro.weatherapplication.data.remote.NetworkConnectivityObserver
 import com.tyro.weatherapplication.data.remote.WeatherApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -54,6 +58,12 @@ object AppModule {
     @Singleton
     fun provideWeatherApiService(retrofit: Retrofit): WeatherApiService{
         return retrofit.create(WeatherApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideConnectivityObserver(@ApplicationContext context: Context): ConnectivityObserver{
+        return NetworkConnectivityObserver(context)
     }
 
 }

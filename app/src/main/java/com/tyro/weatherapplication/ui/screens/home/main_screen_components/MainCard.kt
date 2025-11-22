@@ -39,7 +39,7 @@ import com.tyro.weatherapplication.viewModels.FavoriteViewModel
 import com.tyro.weatherapplication.viewModels.LocationViewModel
 
 @Composable
-fun MainCard(data: WeatherResponse, favoriteViewModel: FavoriteViewModel, animation: WeatherAnimation) {
+fun MainCard(data: WeatherResponse, favoriteViewModel: FavoriteViewModel, animation: WeatherAnimation, temperatureCelsius: Boolean) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
         TextButton(onClick = {
             favoriteViewModel.add(FavoriteLocation(name=data.location.name, latitude = data.location.lat, longitude = data.location.lon))
@@ -80,7 +80,7 @@ fun MainCard(data: WeatherResponse, favoriteViewModel: FavoriteViewModel, animat
                         style = MaterialTheme.typography.titleMedium
                     )
                     Text(
-                        "${data.current.tempC.toInt()}°",
+                        "${ if(temperatureCelsius) data.current.tempC.toInt() else data.current.tempF.toInt()}°",
                         color = MaterialTheme.colorScheme.background,
                         style = MaterialTheme.typography.displayLarge,
                         fontWeight = FontWeight.ExtraBold

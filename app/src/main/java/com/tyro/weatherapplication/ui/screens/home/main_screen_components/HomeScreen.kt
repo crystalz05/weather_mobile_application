@@ -85,8 +85,10 @@ import com.tyro.weatherapplication.ui.components.WeatherAnimation
 import com.tyro.weatherapplication.ui.components.WeatherConditionCard
 import com.tyro.weatherapplication.ui.components.WeatherDetailsCard
 import com.tyro.weatherapplication.utils.Resource
+import com.tyro.weatherapplication.utils.Temperature
 import com.tyro.weatherapplication.viewModels.FavoriteViewModel
 import com.tyro.weatherapplication.viewModels.LocationViewModel
+import com.tyro.weatherapplication.viewModels.MainViewModel
 import com.tyro.weatherapplication.viewModels.WeatherViewModel
 import kotlinx.coroutines.delay
 import java.time.LocalDate
@@ -101,10 +103,17 @@ fun HomeScreen(
     snackbarHostState: SnackbarHostState
 ) {
 
+
+    val viewModel: MainViewModel = hiltViewModel()
+    //to check for temperature unit setting
+    val currentTempUnit = viewModel.currentTemperature
+    val temperatureCelsius = currentTempUnit == Temperature.CELSIUS
+
     val locationViewModel: LocationViewModel = hiltViewModel()
 
     val weatherState by weatherViewModel.weatherState.collectAsState()
     val locationState by locationViewModel.locationState.collectAsState()
+
 
 
     val currentDayDate = LocalDate.now()
@@ -306,7 +315,7 @@ fun HomeScreen(
                             item {
                                 //The home screen main card
                                 if(animation != null){
-                                    MainCard(data, favoriteViewModel, animation)
+                                    MainCard(data, favoriteViewModel, animation, temperatureCelsius)
                                 }
                                 Spacer(Modifier.height(16.dp))
                                 Text("Today", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)

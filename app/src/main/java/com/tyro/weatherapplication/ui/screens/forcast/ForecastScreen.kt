@@ -29,7 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tyro.weatherapplication.ui.components.DaysForecast
 import com.tyro.weatherapplication.ui.components.WeatherAnimation
+import com.tyro.weatherapplication.utils.Temperature
 import com.tyro.weatherapplication.utils.getDayFromFullDate
+import com.tyro.weatherapplication.viewModels.MainViewModel
 import com.tyro.weatherapplication.viewModels.WeatherViewModel
 import kotlinx.coroutines.delay
 
@@ -37,6 +39,12 @@ import kotlinx.coroutines.delay
 @Composable
 fun ForecastScreen( weatherViewModel: WeatherViewModel
 ){
+
+    val viewModel: MainViewModel = hiltViewModel()
+    //to check for temperature unit setting
+    val currentTempUnit = viewModel.currentTemperature
+    val temperatureCelsius = currentTempUnit == Temperature.CELSIUS
+
 
 //    val weatherViewmodel: WeatherViewModel = hiltViewModel()
     val weatherState by weatherViewModel.weatherState.collectAsState()
@@ -48,14 +56,6 @@ fun ForecastScreen( weatherViewModel: WeatherViewModel
         delay(300)
         Log.d("ForcastScreen", weatherState.data.toString())
     }
-
-    data class ForecastData(
-        val icon: ImageVector,
-        val day: String,
-        val condition: String,
-        val topTemp: String,
-        val lowTep: String
-    )
 
     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
@@ -77,14 +77,10 @@ fun ForecastScreen( weatherViewModel: WeatherViewModel
             val conditionCode = forecast.day.condition.code
             val animation = WeatherAnimation.fromCode(conditionCode)
 
-            val avgTempLabel = "${forecast.day.avgTempC.toInt()}°"
-            val minTempLabel = "${forecast.day.minTempC.toInt()}°"
+            val avgTempLabel = "${if(temperatureCelsius)forecast.day.avgTempC.toInt() else forecast.day.avgTempf.toInt()}°"
+            val minTempLabel = "${if(temperatureCelsius)forecast.day.minTempC.toInt() else forecast.day.minTempf.toInt()}°"
 
             DaysForecast(animation, getDayFromFullDate(forecast.date), forecast.day.condition.text, avgTempLabel, minTempLabel)
         }
-//        items(forecasts) { forecast ->
-//            DaysForecast(forecast.icon, forecast.day, forecast.condition, forecast.topTemp, forecast.lowTep)
-//        }
     }
-
 }

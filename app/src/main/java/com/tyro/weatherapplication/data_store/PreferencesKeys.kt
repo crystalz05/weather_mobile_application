@@ -16,4 +16,7 @@ object PreferencesKeys {
 
     val CURRENT_WEATHER_DATA = stringPreferencesKey("cache_current_weather_data")
     val CURRENT_WEATHER_TIMESTAMP = longPreferencesKey("cache_current_weather_timestamp")
+
+    val TEMP_UNIT_KEY = stringPreferencesKey("temperature_unit")
+
 }

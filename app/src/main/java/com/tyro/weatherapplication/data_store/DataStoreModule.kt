@@ -29,7 +29,6 @@ object DataStoreModule {
         return context.dataStore
     }
 
-
     @Provides
     @Singleton
     fun provideSettingsManager(
